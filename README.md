@@ -1,23 +1,10 @@
 # fix-bash-diffs
 
-A Claude Code mod that keeps file-changing Bash commands from flooding the transcript.
+**Stop Bash file diffs from flooding your Claude Code transcript.**
 
-When a Bash command creates or edits files, Claude Code draws up to 40 diff lines per file under the call: a fixed limit in its code, with no setting. Write's preview of a new file stops at 10, so a single `cp` or `cat > file` touching a few files fills far more of the screen than the Write would have.
-
-This mod draws the first 8 diff lines of each file instead, with the file's full `(+N -M)` count in its header and `… N more lines` under it:
-
-```diff
-⎿  Created src/setup.py (+67 -0)
-+import json
-+import sys
-+from pathlib import Path
-+
-+
-+def main():
-+    config = json.loads(Path("config.json").read_text())
-+    print(config["name"])
-   … 59 more lines
-```
+- **The problem:** when a Bash command creates or edits files, Claude Code shows up to 40 diff lines per file, with no setting to change it.
+- **The fix:** this mod shows the first 8 lines of each file, keeps the file's real `(+N -M)` count, and adds `… N more lines` under it.
+- **Untouched:** Edit and Write, and Bash commands whose files fit in 8 lines.
 
 <table>
   <tr>
