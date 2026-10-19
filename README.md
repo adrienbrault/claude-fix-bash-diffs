@@ -2,7 +2,7 @@
 
 A Claude Code mod that keeps file-changing Bash commands from flooding the transcript.
 
-When a Bash command creates or edits files, Claude Code draws every changed line of every file under the call. Write and Edit already cut their previews short; Bash does not, so a single `cp` or `cat > file` can fill several screens.
+When a Bash command creates or edits files, Claude Code draws up to 40 diff lines per file under the call. Write's preview stops at 10 and an Edit shows just its change and a little context, so a single `cp` or `cat > file` touching a few files can fill several screens.
 
 This mod shows the first 10 diff lines of each file, the same as Write's preview, and ends the row with one dim line saying what was cut:
 
