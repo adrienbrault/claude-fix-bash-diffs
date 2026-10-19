@@ -8,27 +8,12 @@ const isOff = atom({ plugin: 'fix-bash-diffs', key: 'isOff' } as const, false)
 
 type Hunk = { oldStart: number; oldLines: number; newStart: number; newLines: number; lines: string[] }
 type FileDiff = { filePath: string; hunks: Hunk[] }
+type BashEditDiff = { files: FileDiff[]; moreFiles: number; skipped?: true; unavailable?: true; shared?: true }
+type BashOutput = { stdout?: string; stderr?: string; bashEditDiff?: BashEditDiff }
 
-const counts = (lines: string[], skip: string) => lines.filter(l => l[0] !== skip && l[0] !== '\\').length
-
-// A "\ No newline at end of file" marker is no line of the file.
-const fileLines = (lines: string[]) => lines.filter(l => l[0] !== '\\').length
-
-// Keeps a file's first `max` diff lines, cutting the hunk they end in.
-export function head(hunks: Hunk[], max = MAX_LINES): { hunks: Hunk[]; hidden: number } {
-  const kept: Hunk[] = []
-  let room = max
-  let total = 0
-  for (const h of hunks) {
-    total += fileLines(h.lines)
-    if (room <= 0) continue
-    const lines = h.lines.slice(0, room)
-    room -= fileLines(lines)
-    kept.push({ ...h, lines, oldLines: counts(lines, '+'), newLines: counts(lines, '-') })
-  }
-
-  return { hunks: kept, hidden: total - (max - room) }
-}
+// A file's diff lines; a "\ No newline at end of file" marker is no line of the file.
+export const diffLines = (hunks: Hunk[]) =>
+  hunks.reduce((n, h) => n + h.lines.filter(l => l[0] !== '\\').length, 0)
 
 export const register: Register = on => {
   on('session.start', async ($, e, next) => {
@@ -50,24 +35,50 @@ export const register: Register = on => {
     // Read on every draw, so a toggle redraws the rows already on screen.
     if (await read($, isOff)) return next(e)
 
-    const output = e.props.output as { bashEditDiff?: { files: FileDiff[] } } | undefined
+    const output = e.props.output as BashOutput | undefined
     const diff = e.props.tool === 'Bash' && !e.props.isErrored ? output?.bashEditDiff : undefined
-    if (!output || !diff || !Array.isArray(diff.files)) return next(e)
+    // A skipped, unavailable or shared diff carries notes of Claude Code's own: leave it to Claude Code.
+    if (!output || !diff || !Array.isArray(diff.files) || diff.skipped || diff.unavailable || diff.shared) return next(e)
+    if (!diff.files.some(f => diffLines(f.hunks) > MAX_LINES)) return next(e)
 
-    const cut = diff.files.map(f => ({ file: f, ...head(f.hunks) }))
-    const notes = cut
-      .filter(c => c.hidden > 0)
-      .map(c => `+${c.hidden} lines (${c.file.filePath.split('/').pop()})`)
-    if (!notes.length) return next(e)
-
-    const files = cut.map(c => ({ ...c.file, hunks: c.hunks }))
-    const drawn = await next({ ...e, props: { ...e.props, output: { ...output, bashEditDiff: { ...diff, files } } } })
+    // Claude Code counts a file's (+N -M) from the hunks it is handed, so each
+    // file goes to it whole, is drawn on its own, and is clipped here to its
+    // header and first lines. A result with a diff draws no "(No output)" line.
+    const { bashEditDiff: _, ...rest } = output
+    const hasText = `${output.stdout ?? ''}${output.stderr ?? ''}`.trim() !== ''
+    const text = hasText ? await next({ ...e, props: { ...e.props, output: rest } }) : null
+    const files = await Promise.all(
+      diff.files.map(async file => ({
+        file,
+        hidden: diffLines(file.hunks) - MAX_LINES,
+        drawn: await next({
+          ...e,
+          props: { ...e.props, output: { ...rest, stdout: '', stderr: '', bashEditDiff: { ...diff, files: [file], moreFiles: 0 } } },
+        }),
+      })),
+    )
     const { Box, Text } = $.ui.resolve(e)
 
     return (
       <Box flexDirection="column">
-        {drawn}
-        <Text dimColor>    … {notes.join(', ')}</Text>
+        {text}
+        {files.map(({ file, hidden, drawn }) =>
+          hidden > 0 ? (
+            <Box key={file.filePath} flexDirection="column">
+              <Box flexDirection="column" height={MAX_LINES + 1} overflow="hidden">
+                {drawn}
+              </Box>
+              <Text dimColor>     … {hidden} more lines</Text>
+            </Box>
+          ) : (
+            <Box key={file.filePath} flexDirection="column">
+              {drawn}
+            </Box>
+          ),
+        )}
+        {diff.moreFiles > 0 ? (
+          <Text dimColor>{`  ⎿  … ${diff.moreFiles} more ${diff.moreFiles === 1 ? 'file' : 'files'} changed`}</Text>
+        ) : null}
       </Box>
     )
   })
