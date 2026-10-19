@@ -1,0 +1,9 @@
+{
+  "name": "short-diffs",
+  "version": "0.1.0",
+  "description": "Shows the first 10 lines of each file a Bash command changed, as Write's preview does",
+  "author": { "name": "Adrien Brault" },
+  "repository": "https://github.com/adrienbrault/claude-fix-bash-diffs",
+  "license": "MIT",
+  "types": "./types/index.d.ts"
+}

@@ -1,0 +1,5 @@
+{
+  "name": "claude-fix-bash-diffs",
+  "owner": { "name": "Adrien Brault" },
+  "plugins": [{ "name": "short-diffs", "source": "./" }]
+}
