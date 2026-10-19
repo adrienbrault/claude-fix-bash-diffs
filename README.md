@@ -12,8 +12,8 @@
     <th>With the mod</th>
   </tr>
   <tr>
-    <td valign="top"><img src="docs/before.png" alt="A Bash call creating three 100-line files: each file's diff runs 40 lines before '… 60 more lines'" width="400"></td>
-    <td valign="top"><img src="docs/after.png" alt="The same Bash call with the mod: each file shows 'Created demo/alpha.txt (+100 -0)', its first 8 lines, then '… 92 more lines'" width="400"></td>
+    <td valign="top"><img src="docs/without-mod.png" alt="A Bash call creating three 100-line files: each file's diff runs 40 lines before '… 60 more lines'" width="400"></td>
+    <td valign="top"><img src="docs/with-mod.png" alt="The same Bash call with the mod: each file shows 'Created demo/alpha.txt (+100 -0)', its first 8 lines, then '… 92 more lines'" width="400"></td>
   </tr>
   <tr>
     <td colspan="2">The same command, creating three 100-line files.</td>
