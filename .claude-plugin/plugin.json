@@ -1,7 +1,7 @@
 {
   "name": "short-diffs",
   "version": "0.1.0",
-  "description": "Shows the first 10 lines of each file a Bash command changed, as Write's preview does",
+  "description": "Shows the first 8 lines of each file a Bash command changed, instead of 40",
   "author": { "name": "Adrien Brault" },
   "repository": "https://github.com/adrienbrault/claude-fix-bash-diffs",
   "license": "MIT",

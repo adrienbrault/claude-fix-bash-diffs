@@ -1,8 +1,8 @@
 import { atom, read, update } from 'claude-code'
 import type { Register } from 'claude-code'
 
-// Write's own preview shows this many lines before "… +N lines".
-export const MAX_LINES = 10
+// Claude Code draws up to 40 lines a file under a Bash call; this keeps the first few.
+export const MAX_LINES = 8
 
 const isOff = atom({ plugin: 'short-diffs', key: 'isOff' } as const, false)
 
@@ -40,7 +40,7 @@ export const register: Register = on => {
   on('command.run', { command: 'short-diffs' }, async $ => {
     const off = await update($, isOff, was => !was)
 
-    return { text: off ? 'off, Bash diffs drawn in full.' : 'on, 10 lines a file.' }
+    return { text: off ? 'off, Bash diffs drawn as Claude Code draws them (40 lines a file).' : 'on, 8 lines a file.' }
   })
 
   on('ui.render', { component: 'ToolResult' }, async ($, e, next) => {

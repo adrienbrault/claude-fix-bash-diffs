@@ -6,7 +6,7 @@ const created = (filePath: string, n: number) => ({
   hunks: [{ oldStart: 1, oldLines: 0, newStart: 1, newLines: n, lines: Array.from({ length: n }, (_, i) => `+line ${i + 1}`) }],
 })
 
-test('a Bash result reaches the engine cut to ten lines a file, with what was cut said below', async ($, on) => {
+test('a Bash result reaches the engine cut to eight lines a file, with what was cut said below', async ($, on) => {
   let seen: unknown
   on('ui.render', { component: 'ToolResult' }, ($, e) => {
     seen = e.props.output
@@ -31,8 +31,8 @@ test('a Bash result reaches the engine cut to ten lines a file, with what was cu
     })
 
     const drawn = (seen as typeof output).bashEditDiff.files
-    expect(drawn.map(f => f.hunks[0]?.lines.length)).toEqual([10, 10, 10])
-    expect(drawn.map(f => f.hunks[0]?.newLines)).toEqual([10, 10, 10])
-    expect(JSON.stringify(tree)).toContain('+57 lines (setup.py), +4 lines (config.json), +33 lines (deploy.sh)')
+    expect(drawn.map(f => f.hunks[0]?.lines.length)).toEqual([8, 8, 8])
+    expect(drawn.map(f => f.hunks[0]?.newLines)).toEqual([8, 8, 8])
+    expect(JSON.stringify(tree)).toContain('+59 lines (setup.py), +6 lines (config.json), +35 lines (deploy.sh)')
   }
 })
