@@ -20,7 +20,7 @@
   </tr>
 </table>
 
-Edit and Write rows are left alone, and so is any Bash row whose files all fit in 8 lines. Only the drawing changes: what the model sees is untouched.
+Only the drawing changes: what the model sees is untouched.
 
 ### What you give up on a cut row
 
