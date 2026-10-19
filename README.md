@@ -10,6 +10,17 @@ This mod shows the first 8 diff lines of each file and ends the row with one dim
 … +59 lines (setup.py), +6 lines (config.json), +35 lines (deploy.sh)
 ```
 
+<table>
+  <tr>
+    <th>Without the mod: one command creating three 100-line files</th>
+    <th>With the mod: one command adding 100 lines to each</th>
+  </tr>
+  <tr>
+    <td valign="top"><img src="docs/before.png" alt="A Bash call drawing 40 lines of each of three new files, then '… 60 more lines' under each" width="400"></td>
+    <td valign="top"><img src="docs/after.png" alt="A Bash call drawing 8 diff lines for each of three files, then one dim line: '… +95 lines (alpha.txt), +95 lines (beta.txt), +95 lines (gamma.txt)'" width="400"></td>
+  </tr>
+</table>
+
 Edit and Write rows are left alone. Only the drawing changes: what the model sees is untouched.
 
 ## Install
