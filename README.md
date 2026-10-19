@@ -16,12 +16,15 @@ This mod draws the first 8 diff lines of each file instead, with the file's full
 
 <table>
   <tr>
-    <th>Without the mod: one command creating three 100-line files</th>
-    <th>With the mod: one command adding 100 lines to each</th>
+    <th>Without the mod</th>
+    <th>With the mod</th>
   </tr>
   <tr>
-    <td valign="top"><img src="docs/before.png" alt="A Bash call drawing 40 lines of each of three new files, then '… 60 more lines' under each" width="400"></td>
-    <td valign="top"><img src="docs/after.png" alt="A Bash call drawing 8 diff lines for each of three files, then one dim line: '… +95 lines (alpha.txt), +95 lines (beta.txt), +95 lines (gamma.txt)'" width="400"></td>
+    <td valign="top"><img src="docs/before.png" alt="A Bash call creating three 100-line files: the first file's diff alone fills the screen, 40 lines before '… 60 more lines'" width="400"></td>
+    <td valign="top"><img src="docs/after.png" alt="The same Bash call with the mod: each file shows 'Created demo/alpha.txt (+100 -0)', its first 8 lines, then '… 92 more lines'" width="400"></td>
+  </tr>
+  <tr>
+    <td colspan="2">The same command, creating three 100-line files.</td>
   </tr>
 </table>
 
