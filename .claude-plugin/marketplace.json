@@ -1,5 +1,6 @@
 {
   "name": "fix-bash-diffs",
   "owner": { "name": "Adrien Brault" },
+  "description": "A Claude Code mod that cuts the file diffs under Bash calls to 8 lines a file",
   "plugins": [{ "name": "fix-bash-diffs", "source": "./" }]
 }

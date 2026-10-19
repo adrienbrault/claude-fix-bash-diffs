@@ -41,6 +41,10 @@ Claude Code only draws Bash file diffs when the session runs in a git repository
 
 To change the limit, edit `MAX_LINES` in `hooks/register.tsx`.
 
+## Requirements
+
+Built and tested on Claude Code 2.1.303. It uses the plugin hooks API, which is early access, and reads the per-file diff Claude Code attaches to a Bash result, an internal field. Either can change in a later release; if Bash rows stop being cut, that is the likely reason.
+
 ## Develop
 
 ```

@@ -20,6 +20,13 @@ test('the cut keeps whole hunks while they fit and drops the ones after', () => 
   expect(hunks).toEqual([a])
 })
 
+test('a no-newline marker is not counted as a hidden line', () => {
+  const lines = [...Array.from({ length: 9 }, (_, i) => `+line ${i + 1}`), '\\ No newline at end of file']
+  const { hidden } = head([{ oldStart: 1, oldLines: 0, newStart: 1, newLines: 9, lines }])
+
+  expect(hidden).toBe(1)
+})
+
 test('a short diff is left whole', () => {
   const input = [{ oldStart: 1, oldLines: 1, newStart: 1, newLines: 1, lines: ['-a', '+A'] }]
 

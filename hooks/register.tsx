@@ -11,16 +11,19 @@ type FileDiff = { filePath: string; hunks: Hunk[] }
 
 const counts = (lines: string[], skip: string) => lines.filter(l => l[0] !== skip && l[0] !== '\\').length
 
+// A "\ No newline at end of file" marker is no line of the file.
+const fileLines = (lines: string[]) => lines.filter(l => l[0] !== '\\').length
+
 // Keeps a file's first `max` diff lines, cutting the hunk they end in.
 export function head(hunks: Hunk[], max = MAX_LINES): { hunks: Hunk[]; hidden: number } {
   const kept: Hunk[] = []
   let room = max
   let total = 0
   for (const h of hunks) {
-    total += h.lines.length
+    total += fileLines(h.lines)
     if (room <= 0) continue
     const lines = h.lines.slice(0, room)
-    room -= lines.length
+    room -= fileLines(lines)
     kept.push({ ...h, lines, oldLines: counts(lines, '+'), newLines: counts(lines, '-') })
   }
 
