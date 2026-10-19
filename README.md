@@ -4,7 +4,7 @@ A Claude Code mod that keeps file-changing Bash commands from flooding the trans
 
 When a Bash command creates or edits files, Claude Code draws up to 40 diff lines per file under the call: a fixed limit in its code, with no setting. Write's preview of a new file stops at 10, so a single `cp` or `cat > file` touching a few files fills far more of the screen than the Write would have.
 
-This mod shows each file's header, with its full `(+N -M)` count, and its first 8 diff lines, with `… N more lines` under it:
+This mod draws the first 8 diff lines of each file instead, with the file's full `(+N -M)` count in its header and `… N more lines` under it:
 
 ```
 ⎿  Created src/setup.py (+67 -0)
@@ -27,13 +27,14 @@ This mod shows each file's header, with its full `(+N -M)` count, and its first 
 
 Edit and Write rows are left alone, and so is any Bash row whose files all fit in 8 lines. Only the drawing changes: what the model sees is untouched.
 
-### How it cuts, and what that costs
+### What you give up on a cut row
 
-Claude Code counts a file's `(+N -M)` from the lines it is handed, so the mod hands it each file whole and clips the drawing to the header and first 8 rows. Counts, colours, gutters and paths stay Claude Code's own. On a clipped row:
+To keep each file's count right, the mod draws a cut row's files itself rather than handing Claude Code a shortened diff (which it would count from). On those rows:
 
-- ctrl+o shows the files clipped too; `/fix-bash-diffs` off shows them whole.
-- `… N more lines` counts diff lines. When long lines wrap, the 8 rows hold fewer lines, so slightly more is hidden than the note says.
-- Claude Code's one-time note under the first file diff of a session ("files that changed while this command ran…") is clipped away when that file is long.
+- ctrl+o does not expand the files to their full diff; `/fix-bash-diffs` off does.
+- The diff is drawn with the plugin API's diff element, so its gutter can differ slightly from Claude Code's own.
+- Paths are shown relative to the session's folder, which is close to, but not exactly, how Claude Code shortens them.
+- Claude Code's one-time note on its first file diff ("files that changed while this command ran…") is not shown.
 
 ## Install
 

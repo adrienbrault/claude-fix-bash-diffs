@@ -15,20 +15,19 @@ const bashResult = (files: ReturnType<typeof created>[]) => ({
 
 const SURFACES = ['terminal', 'desktop'] as const
 
-test('a long Bash diff is drawn by Claude Code a file at a time, each whole, clipped with a note under it', async ($, on) => {
-  const seen: unknown[] = []
+test('a long Bash diff is drawn by the mod: whole counts, eight lines and a note under each file', async ($, on) => {
+  on('session.cwd', () => ({ value: '/repo' }))
+  let seen: unknown
   on('ui.render', { component: 'ToolResult' }, ($, e) => {
-    seen.push(e.props.output)
+    seen = e.props.output
     const { Text } = $.ui.resolve(e)
 
-    return <Text>engine row {seen.length}</Text>
+    return <Text>engine row</Text>
   })
 
-  const files = [created('/repo/src/setup.py', 67), created('/repo/config.json', 6), created('/repo/scripts/deploy.sh', 43)]
-  const output = bashResult(files)
+  const output = bashResult([created('/repo/src/setup.py', 67), created('/repo/config.json', 14), created('/repo/scripts/deploy.sh', 43)])
 
   for (const surface of SURFACES) {
-    seen.length = 0
     const tree = JSON.stringify(
       await $.ui.render({
         surface,
@@ -38,22 +37,21 @@ test('a long Bash diff is drawn by Claude Code a file at a time, each whole, cli
       }),
     )
 
-    // The command's own output once, then each file whole, on its own.
-    expect(seen).toEqual([
-      { stdout: 'tools-ok', stderr: '', interrupted: false },
-      ...files.map(f => ({ stdout: '', stderr: '', interrupted: false, bashEditDiff: { files: [f], moreFiles: 0 } })),
-    ])
-    // The two long files are clipped to their header and eight lines; the short one is not.
-    expect(tree.split('"height":9,"overflow":"hidden"').length - 1).toBe(2)
-    expect(tree).toContain('["     … ","59"," more lines"]')
-    expect(tree).toContain('["     … ","35"," more lines"]')
+    expect(seen).toEqual({ stdout: 'tools-ok', stderr: '', interrupted: false })
+    expect(tree).toContain('engine row')
+    for (const [name, total, hidden] of [['src/setup.py', 67, 59], ['config.json', 14, 6], ['scripts/deploy.sh', 43, 35]] as const) {
+      expect(tree).toContain(`"children":["${name}"]`)
+      expect(tree).toContain(`["(+","${total}"," -","0",")"]`)
+      expect(tree).toContain(`["… ","${hidden}"," more lines"]`)
+    }
+    expect(tree).toContain(JSON.stringify(`@@ -1,0 +1,8 @@\n${Array.from({ length: 8 }, (_, i) => `+line ${i + 1}`).join('\n')}`))
   }
 })
 
 test('a Bash diff short enough is left to Claude Code', async ($, on) => {
-  const seen: unknown[] = []
+  let seen: unknown
   on('ui.render', { component: 'ToolResult' }, ($, e) => {
-    seen.push(e.props.output)
+    seen = e.props.output
     const { Text } = $.ui.resolve(e)
 
     return <Text>engine row</Text>
@@ -61,7 +59,6 @@ test('a Bash diff short enough is left to Claude Code', async ($, on) => {
 
   const output = bashResult([created('/repo/a.txt', 3)])
   for (const surface of SURFACES) {
-    seen.length = 0
     await $.ui.render({
       surface,
       component: 'ToolResult',
@@ -69,6 +66,6 @@ test('a Bash diff short enough is left to Claude Code', async ($, on) => {
       props: { tool_use_id: 'toolu_2', tool: 'Bash', output, isErrored: false },
     })
 
-    expect(seen).toEqual([output])
+    expect(seen).toEqual(output)
   }
 })

@@ -1,6 +1,6 @@
 {
   "name": "fix-bash-diffs",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Shows the first 8 lines of each file a Bash command changed, instead of 40",
   "author": { "name": "Adrien Brault" },
   "repository": "https://github.com/adrienbrault/claude-fix-bash-diffs",
