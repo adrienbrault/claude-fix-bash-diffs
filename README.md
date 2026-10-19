@@ -41,6 +41,24 @@ At the prompt of a Claude Code terminal session:
 
 Answer `y` to add the marketplace, then pick a scope.
 
+Or from a shell:
+
+```sh
+claude plugin marketplace add adrienbrault/claude-fix-bash-diffs
+claude plugin install fix-bash-diffs@fix-bash-diffs
+```
+
+Either way, it loads in the next session you start.
+
+### Update or remove
+
+```sh
+claude plugin marketplace update fix-bash-diffs
+claude plugin update fix-bash-diffs@fix-bash-diffs   # then restart the session
+
+claude plugin uninstall fix-bash-diffs@fix-bash-diffs
+```
+
 ## Use
 
 `/fix-bash-diffs` turns the cut off and on again for the current session, so you can compare. Rows already on screen redraw.
