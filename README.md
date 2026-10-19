@@ -6,11 +6,16 @@ When a Bash command creates or edits files, Claude Code draws up to 40 diff line
 
 This mod draws the first 8 diff lines of each file instead, with the file's full `(+N -M)` count in its header and `… N more lines` under it:
 
-```
+```diff
 ⎿  Created src/setup.py (+67 -0)
-     1 +import json
-     …
-     8 +def main():
++import json
++import sys
++from pathlib import Path
++
++
++def main():
++    config = json.loads(Path("config.json").read_text())
++    print(config["name"])
    … 59 more lines
 ```
 
