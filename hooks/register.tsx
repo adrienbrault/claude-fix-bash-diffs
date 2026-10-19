@@ -4,7 +4,7 @@ import type { Register } from 'claude-code'
 // Claude Code draws up to 40 lines a file under a Bash call; this keeps the first few.
 export const MAX_LINES = 8
 
-const isOff = atom({ plugin: 'short-diffs', key: 'isOff' } as const, false)
+const isOff = atom({ plugin: 'fix-bash-diffs', key: 'isOff' } as const, false)
 
 type Hunk = { oldStart: number; oldLines: number; newStart: number; newLines: number; lines: string[] }
 type FileDiff = { filePath: string; hunks: Hunk[] }
@@ -30,14 +30,14 @@ export function head(hunks: Hunk[], max = MAX_LINES): { hunks: Hunk[]; hidden: n
 export const register: Register = on => {
   on('session.start', async ($, e, next) => {
     await $.command.register({
-      name: 'short-diffs',
+      name: 'fix-bash-diffs',
       description: 'Turn the cut of Bash file diffs on or off',
     })
 
     return next(e)
   })
 
-  on('command.run', { command: 'short-diffs' }, async $ => {
+  on('command.run', { command: 'fix-bash-diffs' }, async $ => {
     const off = await update($, isOff, was => !was)
 
     return { text: off ? 'off, Bash diffs drawn as Claude Code draws them (40 lines a file).' : 'on, 8 lines a file.' }

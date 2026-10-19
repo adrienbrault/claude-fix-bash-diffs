@@ -2,6 +2,6 @@ export type IsOff = boolean
 
 declare module 'claude-code' {
   interface PluginState {
-    'short-diffs': { isOff: IsOff }
+    'fix-bash-diffs': { isOff: IsOff }
   }
 }
