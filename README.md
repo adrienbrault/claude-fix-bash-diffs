@@ -2,7 +2,7 @@
 
 **Stop Bash file diffs from flooding your Claude Code transcript.**
 
-- **The problem:** when a Bash command creates or edits files, Claude Code shows up to 40 diff lines per file, with no setting to change it.
+- **The problem:** when a Bash command creates or edits files in a git repo, Claude Code shows up to 40 diff lines per file, with no setting to change it. Writing a new file with the Write tool shows 10.
 - **The fix:** this mod shows the first 8 lines of each file, keeps the file's real `(+N -M)` count, and adds `… N more lines` under it.
 - **Untouched:** Edit and Write, and Bash commands whose files fit in 8 lines.
 
